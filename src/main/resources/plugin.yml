@@ -1,0 +1,5 @@
+name: IFKFishing
+description: Short for In Front of Keyboard Fishing. Forces players to fish in front of their PC. At least occasionally.
+main: me.rebellion.ifkfishing.IFKFishingPlugin
+author: Rebellion
+version: ${version}
