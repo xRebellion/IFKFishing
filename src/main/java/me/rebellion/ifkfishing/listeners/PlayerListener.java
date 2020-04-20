@@ -17,8 +17,8 @@ public class PlayerListener implements Listener {
         if (e.getState() != State.CAUGHT_FISH)
             return;
         Player p = e.getPlayer();
-        AFKFishDetectionManager.saveFishSpot(p);
         AFKFishDetectionManager.checkAFK(p);
+        AFKFishDetectionManager.saveFishSpot(p);
         ViolationThreshold violation = AFKFishDetectionManager.checkViolation(p);
 
         if (violation.equals(ViolationThreshold.ABOVE_THRESHOLD)) {

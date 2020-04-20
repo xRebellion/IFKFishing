@@ -18,7 +18,6 @@ public class AFKFishDetectionManager {
     private static final int VIOLATION_POINT = 3;
 
     public static void saveFishSpot(Player p) {
-        p.sendMessage("Number of Violation: " + violation.get(p.getName()));
         previousFishSpot.put(p.getName(), p.getLocation());
     }
 
@@ -50,6 +49,7 @@ public class AFKFishDetectionManager {
             return ViolationThreshold.ABOVE_THRESHOLD;
         else
             return ViolationThreshold.ABOVE_MAX;
+
     }
 
     public static void resetViolation(Player p) {
