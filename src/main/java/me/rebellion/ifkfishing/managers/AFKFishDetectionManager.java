@@ -43,9 +43,9 @@ public class AFKFishDetectionManager {
     }
 
     public static ViolationThreshold checkViolation(Player p) {
-        if (violation.get(p.getName()) < VIOLATION_THRESHOLD)
+        if (violation.getOrDefault(p.getName(), 0) < VIOLATION_THRESHOLD)
             return ViolationThreshold.SAFE;
-        else if (violation.get(p.getName()) < MAX_VIOLATION)
+        else if (violation.getOrDefault(p.getName(), 0) < MAX_VIOLATION)
             return ViolationThreshold.ABOVE_THRESHOLD;
         else
             return ViolationThreshold.ABOVE_MAX;
