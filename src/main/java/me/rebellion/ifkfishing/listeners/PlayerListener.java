@@ -1,5 +1,6 @@
 package me.rebellion.ifkfishing.listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,12 +23,17 @@ public class PlayerListener implements Listener {
         ViolationThreshold violation = AFKFishDetectionManager.checkViolation(p);
 
         if (violation.equals(ViolationThreshold.ABOVE_THRESHOLD)) {
-            // TODO: create send message to player
+            String message = "&7&oMatamu terasa sedikit berat akibat memancing...";
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            p.sendMessage(message);
         } else if (violation.equals(ViolationThreshold.ABOVE_MAX)) {
-            // TODO: execute punishment
+            String message = "&7&oKamu tertidur karena memancing...";
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            p.sendMessage(message);
             PunishmentManager.disorientPlayer(p);
             AFKFishDetectionManager.resetViolation(p);
         }
+
     }
 
 }
