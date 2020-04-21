@@ -3,19 +3,18 @@ package me.rebellion.ifkfishing.managers;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class AFKFishDetectionManager {
-    public enum ViolationThreshold {
-        SAFE, ABOVE_THRESHOLD, ABOVE_MAX
-    }
 
     private static Map<String, Location> previousFishSpot = new HashMap<>();
     private static Map<String, Integer> violation = new HashMap<>();
+    private static Map<String, Integer> streak = new HashMap<>();
     private static final int VIOLATION_THRESHOLD = 20;
-    private static final int MAX_VIOLATION = 25;
-    private static final int VIOLATION_POINT = 3;
+    private static final int MAX_VIOLATION = 23;
+    private static final int VIOLATION_POINT = 4;
 
     public static void saveFishSpot(Player p) {
         previousFishSpot.put(p.getName(), p.getLocation());
@@ -26,10 +25,9 @@ public class AFKFishDetectionManager {
         Location l = p.getLocation();
         if (previousFishSpot.containsKey(name)) {
             int vl = calculateViolation(previousFishSpot.get(name), l);
-            if (vl != -1)
-                violation.put(name, violation.getOrDefault(name, 0) + vl);
-            else
-                violation.put(name, 0);
+            int totalvl = (violation.getOrDefault(name, 0) + vl + streak.getOrDefault(name, 0));
+            totalvl = totalvl > 0 ? totalvl : 0;
+            violation.put(name, totalvl);
 
         }
     }
@@ -38,22 +36,32 @@ public class AFKFishDetectionManager {
         if (prev.getPitch() == now.getPitch() && prev.getYaw() == now.getYaw())
             return VIOLATION_POINT;
         else
-            return -1;
+            return -VIOLATION_POINT * 2;
 
     }
 
-    public static ViolationThreshold checkViolation(Player p) {
-        if (violation.getOrDefault(p.getName(), 0) < VIOLATION_THRESHOLD)
-            return ViolationThreshold.SAFE;
-        else if (violation.getOrDefault(p.getName(), 0) < MAX_VIOLATION)
-            return ViolationThreshold.ABOVE_THRESHOLD;
-        else
-            return ViolationThreshold.ABOVE_MAX;
-
-    }
-
-    public static void resetViolation(Player p) {
+    private static void resetViolation(Player p) {
         violation.put(p.getName(), 0);
     }
 
+    public static void executePunishment(Player p) {
+        if (violation.getOrDefault(p.getName(), 0) < VIOLATION_THRESHOLD)
+            return;
+        else if (violation.getOrDefault(p.getName(), 0) < MAX_VIOLATION) {
+            String message = "&7&oRasanya ada yang aneh...";
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            p.sendMessage(message);
+        } else {
+            streak.putIfAbsent(p.getName(), 0);
+            PunishmentManager.punish(p, streak.get(p.getName()));
+            resetViolation(p);
+            NotificationManager.notifyStaff(p);
+            streak.put(p.getName(), streak.get(p.getName()) + 1);
+            if (streak.get(p.getName()) >= 3) {
+                streak.put(p.getName(), 0);
+            }
+
+        }
+
+    }
 }

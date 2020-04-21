@@ -3,3 +3,9 @@ description: Short for In Front of Keyboard Fishing. Forces players to fish in f
 main: me.rebellion.ifkfishing.IFKFishingPlugin
 author: Rebellion
 version: ${version}
+api-version: 1.15
+
+permissions:
+  ifkfishing.notify:
+    description: Allows the players with this permission to be notified if someone got caught AFK fishing
+    default: op
