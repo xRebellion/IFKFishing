@@ -6,6 +6,6 @@ version: ${version}
 api-version: 1.15
 
 permissions:
-  ifkfishing.notify:
+  ifkfishing.notification:
     description: Allows the players with this permission to be notified if someone got caught AFK fishing
     default: op
