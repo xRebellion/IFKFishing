@@ -15,6 +15,7 @@ public class AFKFishDetectionManager {
     private static final int VIOLATION_THRESHOLD = 20;
     private static final int MAX_VIOLATION = 23;
     private static final int VIOLATION_POINT = 4;
+    private static final int MAX_STREAK = 4;
 
     public static void saveFishSpot(Player p) {
         previousFishSpot.put(p.getName(), p.getLocation());
@@ -55,9 +56,10 @@ public class AFKFishDetectionManager {
             streak.putIfAbsent(p.getName(), 0);
             PunishmentManager.punish(p, streak.get(p.getName()));
             resetViolation(p);
-            NotificationManager.notifyStaff(p);
+
             streak.put(p.getName(), streak.get(p.getName()) + 1);
-            if (streak.get(p.getName()) >= 3) {
+            NotificationManager.notifyStaff(p, streak.get(p.getName()));
+            if (streak.get(p.getName()) >= MAX_STREAK) {
                 streak.put(p.getName(), 0);
             }
 
