@@ -1,7 +1,9 @@
 package me.rebellion.ifkfishing.managers;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Bee;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
@@ -11,7 +13,7 @@ import org.bukkit.potion.PotionEffectType;
 
 public class MobManager {
     enum MobType {
-        FISHERHUNTER
+        FISHERHUNTER, TRUSTYBEE
     }
 
     public static void spawn(final Player target, final MobType type) {
@@ -40,6 +42,16 @@ public class MobManager {
             skeleton.setCustomName("Pengganggu Mancing");
             skeleton.setCustomNameVisible(true);
             skeleton.attack(target);
+        } else if (type.equals(MobType.TRUSTYBEE)) {
+            final PotionEffect potion = new PotionEffect(PotionEffectType.WITHER, 100000, 0);
+            final Bee bee = (Bee) target.getWorld().spawnEntity(target.getLocation(), EntityType.BEE);
+            bee.addPotionEffect(potion);
+            bee.addPassenger(target);
+            bee.setCustomName("BLBLBLBLBLBL");
+            bee.setCustomNameVisible(true);
+            bee.setGlowing(true);
+            bee.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            bee.getAttribute(Attribute.GENERIC_FLYING_SPEED).setBaseValue(3);
         }
     }
 }
