@@ -7,6 +7,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import me.rebellion.ifkfishing.enums.PunishSelectionMode;
+import me.rebellion.ifkfishing.enums.PunishmentType;
+
 public class AFKFishDetectionManager {
 
     private static Map<String, Location> previousFishSpot = new HashMap<>();
@@ -16,6 +19,9 @@ public class AFKFishDetectionManager {
     private static final int MAX_VIOLATION = 23;
     private static final int VIOLATION_POINT = 4;
     private static final int MAX_STREAK = 4;
+
+    private static PunishmentType punishmentType = PunishmentType.getDefault();
+    private static PunishSelectionMode scoringMode = PunishSelectionMode.getDefault();
 
     public static void saveFishSpot(Player p) {
         previousFishSpot.put(p.getName(), p.getLocation());
@@ -45,6 +51,30 @@ public class AFKFishDetectionManager {
         violation.put(p.getName(), 0);
     }
 
+    private static void streakPunish(Player p) {
+        int numStreak = streak.get(p.getName());
+        streak.putIfAbsent(p.getName(), 0);
+        streak.put(p.getName(), numStreak + 1);
+        switch (numStreak) {
+            case 1:
+                PunishmentManager.punish(p, PunishmentType.LOOK_DOWN);
+                break;
+            case 2:
+                PunishmentManager.punish(p, PunishmentType.LOOK_UP);
+                break;
+            case 3:
+                PunishmentManager.punish(p, PunishmentType.TRUSTYBEE);
+                break;
+            case 4:
+                PunishmentManager.punish(p, PunishmentType.FISHERHUNTER);
+                break;
+        }
+        resetViolation(p);
+        if ((numStreak) >= MAX_STREAK) {
+            streak.put(p.getName(), 0);
+        }
+    }
+
     public static void executePunishment(Player p) {
         if (violation.getOrDefault(p.getName(), 0) < VIOLATION_THRESHOLD)
             return;
@@ -53,15 +83,15 @@ public class AFKFishDetectionManager {
             message = ChatColor.translateAlternateColorCodes('&', message);
             p.sendMessage(message);
         } else {
-            streak.putIfAbsent(p.getName(), 0);
-            PunishmentManager.punish(p, streak.get(p.getName()));
-            resetViolation(p);
-
-            streak.put(p.getName(), streak.get(p.getName()) + 1);
-            NotificationManager.notifyStaff(p, streak.get(p.getName()));
-            if (streak.get(p.getName()) >= MAX_STREAK) {
-                streak.put(p.getName(), 0);
+            if (scoringMode == PunishSelectionMode.STREAK) {
+                streakPunish(p);
+            } else if (scoringMode == PunishSelectionMode.RANDOM) {
+                PunishmentType value = PunishmentType.randomEnum(PunishmentType.class);
+                PunishmentManager.punish(p, value);
+            } else {
+                PunishmentManager.punish(p, punishmentType);
             }
+            NotificationManager.notifyStaff(p, streak.getOrDefault(p.getName(), 0));
 
         }
 
