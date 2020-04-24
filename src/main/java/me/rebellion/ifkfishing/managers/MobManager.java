@@ -52,6 +52,7 @@ public class MobManager {
             bee.setGlowing(true);
             bee.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
             bee.getAttribute(Attribute.GENERIC_FLYING_SPEED).setBaseValue(3);
+            bee.setHealth(20);
         }
     }
 }
