@@ -24,13 +24,11 @@ public class MobManager {
             bow.addUnsafeEnchantment(Enchantment.ARROW_KNOCKBACK, 9);
             boots.addEnchantment(Enchantment.DEPTH_STRIDER, 3);
 
-            final PotionEffect potion = new PotionEffect(PotionEffectType.SPEED, 100000, 6);
             final PotionEffect potion2 = new PotionEffect(PotionEffectType.WATER_BREATHING, 100000, 0);
             final PotionEffect potion3 = new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 100000, 0);
             final Skeleton skeleton = (Skeleton) target.getWorld().spawnEntity(target.getLocation(),
                     EntityType.SKELETON);
 
-            skeleton.addPotionEffect(potion);
             skeleton.addPotionEffect(potion2);
             skeleton.addPotionEffect(potion3);
             skeleton.getEquipment().setItemInMainHand(bow);
